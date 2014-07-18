@@ -24,8 +24,9 @@ same.
 
 ### npmrc Files
 
-The three relevant files are:
+The four relevant files are:
 
+* per-project config file (/path/to/my/project/.npmrc)
 * per-user config file (~/.npmrc)
 * global config file ($PREFIX/npmrc)
 * npm builtin config file (/path/to/npm/npmrc)
@@ -60,6 +61,7 @@ The following shorthands are parsed on the command-line:
 * `-D`: `--save-dev`
 * `-O`: `--save-optional`
 * `-B`: `--save-bundle`
+* `-E`: `--save-exact`
 * `-y`: `--yes`
 * `-n`: `--yes false`
 * `ll` and `la` commands: `ls --long`
@@ -143,6 +145,15 @@ Set to `null` to only allow "known" registrars, or to a specific CA cert
 to trust only that specific signing authority.
 
 See also the `strict-ssl` config.
+
+### cafile
+
+* Default: `null`
+* Type: path
+
+A path to a file containing one or multiple Certificate Authority signing
+certificates. Similar to the `ca` setting, but allows for multiple CA's, as
+well as for the CA information to be stored in a file on disk.
 
 ### cache
 
@@ -241,12 +252,6 @@ set.
 * Type: path
 
 The command to run for `npm edit` or `npm config edit`.
-
-### email
-
-The email of the logged-in user.
-
-Set by the `npm adduser` command.  Should not be set explicitly.
 
 ### engine-strict
 
@@ -466,7 +471,7 @@ The default is "http", which shows http, warn, and error output.
 * Type: Stream
 
 This is the stream that is passed to the
-[npmlog](https://github.com/isaacs/npmlog) module at run time.
+[npmlog](https://github.com/npm/npmlog) module at run time.
 
 It cannot be set from the command line, but if you are using npm
 programmatically, you may wish to send logs to somewhere other than
@@ -620,22 +625,56 @@ bundledDependencies list.
 
 Save installed packages to a package.json file as devDependencies.
 
-When used with the `npm rm` command, it removes it from the devDependencies
-hash.
+When used with the `npm rm` command, it removes it from the
+devDependencies hash.
 
 Only works if there is already a package.json file present.
+
+### save-exact
+
+* Default: false
+* Type: Boolean
+
+Dependencies saved to package.json using `--save`, `--save-dev` or
+`--save-optional` will be configured with an exact version rather than
+using npm's default semver range operator.
 
 ### save-optional
 
 * Default: false
 * Type: Boolean
 
-Save installed packages to a package.json file as optionalDependencies.
+Save installed packages to a package.json file as
+optionalDependencies.
 
-When used with the `npm rm` command, it removes it from the devDependencies
-hash.
+When used with the `npm rm` command, it removes it from the
+devDependencies hash.
 
 Only works if there is already a package.json file present.
+
+### save-prefix
+
+* Default: '^'
+* Type: String
+
+Configure how versions of packages installed to a package.json file via
+`--save` or `--save-dev` get prefixed.
+
+For example if a package has version `1.2.3`, by default it's version is
+set to `^1.2.3` which allows minor upgrades for that package, but after
+`npm config set save-prefix='~'` it would be set to `~1.2.3` which only allows
+patch upgrades.
+
+### scope
+
+* Default: ""
+* Type: String
+
+Associate an operation with a scope for a scoped registry. Useful when logging
+in to a private registry for the first time:
+`npm login --scope=@organization --registry=registry.organization.com`, which
+will cause `@organization` to be mapped to the registry for future installation
+of packages specified according to the pattern `@organization/package`.
 
 ### searchopts
 
@@ -687,6 +726,17 @@ using `-s` to add a signature.
 
 Note that git requires you to have set up GPG keys in your git configs
 for this to work properly.
+
+### spin
+
+* Default: true
+* Type: Boolean or `"always"`
+
+When set to `true`, npm will display an ascii spinner while it is doing
+things, if `process.stderr` is a TTY.
+
+Set to `false` to suppress the spinner, or set to `always` to output
+the spinner even for non-TTY outputs.
 
 ### strict-ssl
 
@@ -748,13 +798,6 @@ instead of complete help when doing `npm-help(1)`.
 * Type: String or Number
 
 The UID to set to when running package scripts as root.
-
-### username
-
-* Default: null
-* Type: String
-
-The username on the npm registry.  Set with `npm adduser`
 
 ### userconfig
 

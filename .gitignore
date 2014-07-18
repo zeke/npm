@@ -8,8 +8,10 @@ npm-debug.log
 /test/root
 /node_modules/ronn
 /node_modules/tap
+/node_modules/nock
 /node_modules/.bin
 /node_modules/npm-registry-mock
+/node_modules/marked
 /html/api/
 /html/doc/
 /man/
@@ -18,4 +20,7 @@ npm-debug.log
 /release/
 /npm-*.tgz
 /node_modules/npm-registry-client/test/fixtures
+/node_modules/npm-registry-couchapp
 *.pyc
+.jshintrc
+.eslintrc
